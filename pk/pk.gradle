@@ -1,0 +1,41 @@
+apply plugin: 'packer'
+
+android {
+
+    signingConfigs {
+        release {
+            keyAlias "imatest"
+            keyPassword "imatest"
+            storePassword "imatest"
+            storeFile project.rootProject.file("pk/imatest.jks")
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        release {
+            minifyEnabled false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+packer {
+    archiveNameFormat = '${appPkg}-${buildType}-v${versionName}-${channel}'
+    archiveOutput = new File(project.rootProject.getProjectDir().getAbsolutePath() + "/pk",
+            "${android.defaultConfig.applicationId}" +
+                    "_code${android.defaultConfig.versionCode}" +
+                    "_name${android.defaultConfig.versionName}")
+    channelFile = project.rootProject.file("pk/channels.txt")
+}
+
+dependencies {
+    implementation 'com.mcxiaoke.packer-ng:helper:2.0.1'
+}
