@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/smtp"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -18,6 +19,9 @@ import (
 const gradleFilePath = "app/build.gradle"
 const versionCodeMark = "versionCode"
 const versionNameMark = "versionName"
+const email = "chenyuwei@adesk.com"
+const downloadURL = "http://adesk.valorachen.top"
+const siteURL = "http://files.valorachen.top/index.php?bucket=adesk&name=%E6%97%A5%E5%B8%B8%E6%9B%B4%E6%96%B0%E5%8C%85"
 
 func init() {
 	if err := termbox.Init(); err != nil {
@@ -135,7 +139,18 @@ func updateVersion(path string) {
 	executeAndPrint("git", "push")
 	fmt.Println("upload success!")
 	fmt.Println("qshell rput " + outputDirName + ".7z" + " " + "pk/" + outputDirName + ".7z")
-	fmt.Println("visit link: http://files.valorachen.top/index.php?bucket=adesk&name=%E6%97%A5%E5%B8%B8%E6%9B%B4%E6%96%B0%E5%8C%85")
+	fmt.Println("visit link: " + siteURL)
+	body := "<html><body>" +
+		"<h3>下载地址：" + downloadURL + "/" + outputDirName + ".7z" + "</h3>" +
+		"<h3>更多内容请查看：" + siteURL + "</h3>" +
+		"</body></html>"
+	err := SendMail("acodeplayer@163.com", "playhard7", "smtp.163.com:25", email, pkName+"更新包_v"+newVersionName, body, "html")
+	if err != nil {
+		fmt.Println("发送邮件失败!")
+		fmt.Println(err)
+	} else {
+		fmt.Println("发送邮件成功!")
+	}
 }
 
 func executeAndPrint(name string, arg ...string) {
@@ -160,6 +175,22 @@ func executeAndPrint(name string, arg ...string) {
 		log.Fatal(err)
 	}
 	fmt.Println(string(opBytes))
+}
+
+func SendMail(user, password, host, to, subject, body, mailtype string) error {
+	hp := strings.Split(host, ":")
+	auth := smtp.PlainAuth("", user, password, hp[0])
+	var content_type string
+	if mailtype == "html" {
+		content_type = "Content-Type: text/" + mailtype + "; charset=UTF-8"
+	} else {
+		content_type = "Content-Type: text/plain" + "; charset=UTF-8"
+	}
+
+	msg := []byte("To: " + to + "\r\nFrom: " + user + "<" + user + ">\r\nSubject: " + subject + "\r\n" + content_type + "\r\n\r\n" + body)
+	send_to := strings.Split(to, ";")
+	err := smtp.SendMail(host, auth, user, send_to, msg)
+	return err
 }
 
 func pause() {
