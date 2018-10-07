@@ -33,7 +33,7 @@ func main() {
 	flag.Parse()
 
 	if strings.Compare(absolutePath, "/") == 0 {
-		absolutePath = getCurrentDirectory() + "/app/build.gradle"
+		absolutePath = getCurrentDirectory() + "/" + gradleFilePath
 	}
 	fmt.Printf("provided path was %s\n", absolutePath)
 	exists := Exists(absolutePath)
@@ -129,7 +129,10 @@ func updateVersion(path string) {
 	outputDirName := pkName + "_code" + strconv.Itoa(newVersionCode) + "_name" + newVersionName
 	executeAndPrint("7z", "a", "pk/"+outputDirName+".7z", "pk/"+outputDirName+"/*.apk")
 	executeAndPrint("qshell", "rput", "adesk", outputDirName+".7z", "pk/"+outputDirName+".7z")
-
+	executeAndPrint("git", "add", gradleFilePath)
+	executeAndPrint("git", "commit", "-m", "来自自动打包程序，已自动更新到版本v"+newVersionName)
+	executeAndPrint("git", "tag", newVersionName)
+	executeAndPrint("git", "push")
 	fmt.Println("upload success!")
 	fmt.Println("qshell rput " + outputDirName + ".7z" + " " + "pk/" + outputDirName + ".7z")
 	fmt.Println("visit link: http://files.valorachen.top/index.php?bucket=adesk&name=%E6%97%A5%E5%B8%B8%E6%9B%B4%E6%96%B0%E5%8C%85")
