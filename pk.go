@@ -14,8 +14,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-
-	//termbox "github.com/nsf/termbox-go"
 )
 
 const gradleFilePath = "app/build.gradle"
@@ -24,14 +22,6 @@ const versionNameMark = "versionName"
 const email = "chenyuwei@adesk.com"
 const downloadURL = "http://adesk.valorachen.top"
 const siteURL = "http://files.valorachen.top/index.php?bucket=adesk&name=%E6%97%A5%E5%B8%B8%E6%9B%B4%E6%96%B0%E5%8C%85"
-
-// func init() {
-// 	if err := termbox.Init(); err != nil {
-// 		panic(err)
-// 	}
-// 	termbox.SetCursor(0, 0)
-// 	termbox.HideCursor()
-// }
 
 func main() {
 	var absolutePath string
@@ -201,17 +191,6 @@ func SendMail(user, password, host, to, subject, body, mailtype string) error {
 	send_to := strings.Split(to, ";")
 	err := smtp.SendMail(host, auth, user, send_to, msg)
 	return err
-}
-
-func pause() {
-	fmt.Println("请按任意键继续...")
-Loop:
-	for {
-		switch ev := termbox.PollEvent(); ev.Type {
-		case termbox.EventKey:
-			break Loop
-		}
-	}
 }
 
 func getCurrentDirectory() string {
