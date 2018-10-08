@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/smtp"
@@ -23,13 +25,13 @@ const email = "chenyuwei@adesk.com"
 const downloadURL = "http://adesk.valorachen.top"
 const siteURL = "http://files.valorachen.top/index.php?bucket=adesk&name=%E6%97%A5%E5%B8%B8%E6%9B%B4%E6%96%B0%E5%8C%85"
 
-func init() {
-	if err := termbox.Init(); err != nil {
-		panic(err)
-	}
-	termbox.SetCursor(0, 0)
-	termbox.HideCursor()
-}
+// func init() {
+// 	if err := termbox.Init(); err != nil {
+// 		panic(err)
+// 	}
+// 	termbox.SetCursor(0, 0)
+// 	termbox.HideCursor()
+// }
 
 func main() {
 	var absolutePath string
@@ -124,19 +126,19 @@ func updateVersion(path string) {
 	fmt.Println("new version code:" + strconv.Itoa(newVersionCode))
 	fmt.Println("new version name:" + newVersionName)
 	fmt.Println("update version file sccuess")
-	executeAndPrint("gradle", "apkRelease")
+	execCommand("gradle", "apkRelease")
 	applicationIDRe, _ := regexp.Compile("applicationId" + ".\"(.*)\"")
 	applicationID := applicationIDRe.FindString(gradleConfig)
 	pkNameRe, _ := regexp.Compile("\"(.*)\"")
 	pkName := pkNameRe.FindString(applicationID)
 	pkName = strings.Replace(pkName, "\"", "", -1)
 	outputDirName := pkName + "_code" + strconv.Itoa(newVersionCode) + "_name" + newVersionName
-	executeAndPrint("7z", "a", "pk/"+outputDirName+".7z", "pk/"+outputDirName+"/*.apk")
-	executeAndPrint("qshell", "rput", "adesk", outputDirName+".7z", "pk/"+outputDirName+".7z")
-	executeAndPrint("git", "add", gradleFilePath)
-	executeAndPrint("git", "commit", "-m", "来自自动打包程序，已自动更新到版本v"+newVersionName)
-	executeAndPrint("git", "tag", newVersionName)
-	executeAndPrint("git", "push")
+	execCommand("7z", "a", "pk/"+outputDirName+".7z", "pk/"+outputDirName+"/*.apk")
+	execCommand("qshell", "rput", "adesk", outputDirName+".7z", "pk/"+outputDirName+".7z")
+	execCommand("git", "add", gradleFilePath)
+	execCommand("git", "commit", "-m", "来自自动打包程序，已自动更新到版本v"+newVersionName)
+	execCommand("git", "tag", newVersionName)
+	execCommand("git", "push")
 	fmt.Println("upload success!")
 	fmt.Println("qshell rput " + outputDirName + ".7z" + " " + "pk/" + outputDirName + ".7z")
 	fmt.Println("visit link: " + siteURL)
@@ -153,28 +155,36 @@ func updateVersion(path string) {
 	}
 }
 
-func executeAndPrint(name string, arg ...string) {
-	// 执行系统命令
-	// 第一个参数是命令名称
-	// 后面参数可以有多个，命令参数
-	cmd := exec.Command(name, arg...)
-	// 获取输出对象，可以从该对象中读取输出结果
+func execCommand(commandName string, arg ...string) bool {
+	//函数返回一个*Cmd，用于使用给出的参数执行name指定的程序
+	cmd := exec.Command(commandName, arg...)
+
+	//显示运行的命令
+	fmt.Println(cmd.Args)
+	//StdoutPipe方法返回一个在命令Start后与命令标准输出关联的管道。Wait方法获知命令结束后会关闭这个管道，一般不需要显式的关闭该管道。
 	stdout, err := cmd.StdoutPipe()
+
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		return false
 	}
-	// 保证关闭输出流
-	defer stdout.Close()
-	// 运行命令
-	if err := cmd.Start(); err != nil {
-		log.Fatal(err)
+
+	cmd.Start()
+	//创建一个流来读取管道内内容，这里逻辑是通过一行一行的读取的
+	reader := bufio.NewReader(stdout)
+
+	//实时循环读取输出流中的一行内容
+	for {
+		line, err2 := reader.ReadString('\n')
+		if err2 != nil || io.EOF == err2 {
+			break
+		}
+		fmt.Println(line)
 	}
-	// 读取输出结果
-	opBytes, err := ioutil.ReadAll(stdout)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(string(opBytes))
+
+	//阻塞直到该命令执行完成，该命令必须是被Start方法开始执行的
+	cmd.Wait()
+	return true
 }
 
 func SendMail(user, password, host, to, subject, body, mailtype string) error {
