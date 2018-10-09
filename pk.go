@@ -91,7 +91,7 @@ func updateVersion(path string) {
 	newLastName++
 	//35.1.3
 	newVersionNamePart2 := strconv.Itoa(newLastName)
-	newVersionNamePart1 := currentVersionName[0 : len(currentVersionName)-len(newVersionNamePart2)]
+	newVersionNamePart1 := currentVersionName[0 : len(currentVersionName)-len(lastName)]
 	newVersionName := newVersionNamePart1 + newVersionNamePart2
 	//versionName: "35.1.3"
 	newVersionNameConfig := nameRe.ReplaceAllString(currentVersionNameConfig, newVersionName)
