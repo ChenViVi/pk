@@ -29,7 +29,7 @@ android {
 
 packer {
     archiveNameFormat = '${appPkg}-${buildType}-v${versionName}-${channel}'
-    archiveOutput = new File(project.rootProject.getProjectDir().getAbsolutePath() + "/pk",
+    archiveOutput = new File(project.rootProject.buildDir,
             "${android.defaultConfig.applicationId}" +
                     "_code${android.defaultConfig.versionCode}" +
                     "_name${android.defaultConfig.versionName}")
