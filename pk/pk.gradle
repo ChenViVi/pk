@@ -1,34 +1,8 @@
+apply from: "../pk/base.gradle"
 apply plugin: 'packer'
 
-android {
-
-    signingConfigs {
-        release {
-            keyAlias "imatest"
-            keyPassword "imatest"
-            storePassword "imatest"
-            storeFile project.rootProject.file("pk/imatest.jks")
-        }
-    }
-
-    buildTypes {
-        debug {
-            minifyEnabled false
-            zipAlignEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-        }
-        release {
-            minifyEnabled false
-            zipAlignEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-        }
-    }
-}
-
 packer {
-    archiveNameFormat = '${appPkg}-${buildType}-v${versionName}-${channel}'
+    archiveNameFormat = '${appPkg}_code${versionCode}_name${versionName}_${channel}'
     archiveOutput = new File(project.rootProject.buildDir,
             "${android.defaultConfig.applicationId}" +
                     "_code${android.defaultConfig.versionCode}" +

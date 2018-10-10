@@ -8,10 +8,11 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 17
         versionName "1.5"
+        flavorDimensions "pk"
     }
 }
 
-apply from: "../pk/pk.gradle"
+apply from: "../pk/pk_old.gradle"
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

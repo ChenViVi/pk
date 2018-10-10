@@ -1,0 +1,70 @@
+apply from: "../pk/base.gradle"
+
+android {
+
+    productFlavors {
+        oppo {}
+        vivo {}
+        tencent {}
+    }
+
+    /**
+     * 渠道包定制
+     */
+    productFlavors.all {
+        flavor ->
+            def channel = name.replaceAll("_", "")
+            flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: channel]
+            flavor.versionCode = android.defaultConfig.versionCode
+            flavor.versionName = android.defaultConfig.versionName
+    }
+
+    //定义一个装apk文件路径的数组
+    def fileArray = []
+    android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.contains('release')) {
+                def variantProd = variant.productFlavors[0]
+//                def fileName = "${android.defaultConfig.applicationId}"
+//                + "_code${android.defaultConfig.versionCode}"
+//                +"_name${android.defaultConfig.versionName}"
+//                + "_${variantProd.name.replaceAll("_", "")}.apk"
+                def fileName = "${android.defaultConfig.applicationId}" +
+                        "_code${android.defaultConfig.versionCode}_name${android.defaultConfig.versionName}" + "_${variantProd.name.replaceAll("_", "")}.apk"
+                outputFileName = fileName
+                fileArray.add(outputFile.parentFile.absolutePath + File.separator + fileName)
+            }
+        }
+    }
+
+    dexOptions {
+        preDexLibraries = false
+        javaMaxHeapSize "4g"     // 设置java堆内存大小
+    }
+
+    tasks.whenTaskAdded { task ->
+        if (task.name == 'assembleRelease')
+            task.doLast {
+                forEachFile(fileArray)
+            }
+    }
+}
+
+def forEachFile(fileArray) {
+    fileArray.forEach { filePath ->
+        rename_and_move_apk(filePath)
+    }
+}
+
+def rename_and_move_apk(filePath) {
+    def outFileDir = project.rootProject.buildDir.getAbsolutePath() +
+            File.separator +
+            "${android.defaultConfig.applicationId}" +
+            "_code${android.defaultConfig.versionCode}" +
+            "_name${android.defaultConfig.versionName}"
+    copy {
+        from filePath
+        into outFileDir
+    }
+}

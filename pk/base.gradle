@@ -1,0 +1,33 @@
+apply plugin: 'packer'
+
+android {
+
+    signingConfigs {
+        release {
+            keyAlias "imatest"
+            keyPassword "imatest"
+            storePassword "imatest"
+            storeFile project.rootProject.file("pk/imatest.jks")
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        release {
+            minifyEnabled false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    dexOptions {
+        preDexLibraries = false
+        javaMaxHeapSize "4g"     // 设置java堆内存大小
+    }
+}

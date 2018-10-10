@@ -123,14 +123,14 @@ func updateVersion(path string) {
 	pkName := pkNameRe.FindString(applicationID)
 	pkName = strings.Replace(pkName, "\"", "", -1)
 	outputDirName := pkName + "_code" + strconv.Itoa(newVersionCode) + "_name" + newVersionName
-	execCommand("7z", "a", "pk/"+outputDirName+".7z", "pk/"+outputDirName+"/*.apk")
-	execCommand("qshell", "rput", "adesk", outputDirName+".7z", "pk/"+outputDirName+".7z")
+	execCommand("7z", "a", "build/"+outputDirName+".7z", "build/"+outputDirName+"/*.apk")
+	execCommand("qshell", "rput", "adesk", outputDirName+".7z", "build/"+outputDirName+".7z")
 	execCommand("git", "add", gradleFilePath)
 	execCommand("git", "commit", "-m", "来自自动打包程序，已自动更新到版本v"+newVersionName)
 	execCommand("git", "tag", newVersionName)
 	execCommand("git", "push")
-	fmt.Println("upload success!")
-	fmt.Println("qshell rput " + outputDirName + ".7z" + " " + "pk/" + outputDirName + ".7z")
+	fmt.Println("pk success!")
+	fmt.Println("download link: " + downloadURL + "/" + outputDirName + ".7z")
 	fmt.Println("visit link: " + siteURL)
 	body := "<html><body>" +
 		"<h3>下载地址：" + downloadURL + "/" + outputDirName + ".7z" + "</h3>" +
