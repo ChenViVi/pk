@@ -6,12 +6,13 @@ android {
         applicationId "com.iwritebug.pk"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 24
-        versionName "112"
+        versionCode 25
+        versionName "1.10"
         flavorDimensions "pk"
     }
 }
-
+
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
