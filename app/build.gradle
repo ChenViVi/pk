@@ -6,15 +6,16 @@ android {
         applicationId "com.iwritebug.pk"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 17
-        versionName "1.5"
+        versionCode 23
+        versionName "111"
         flavorDimensions "pk"
     }
 }
-
-apply from: "../pk/pk_old.gradle"
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0'
 }
+
+apply from: "../pk/pk.gradle"
