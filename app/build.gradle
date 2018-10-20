@@ -6,8 +6,8 @@ android {
         applicationId "com.iwritebug.pk"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 23
-        versionName "111"
+        versionCode 24
+        versionName "112"
         flavorDimensions "pk"
     }
 }
