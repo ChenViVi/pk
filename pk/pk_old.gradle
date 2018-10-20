@@ -26,10 +26,6 @@ android {
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.contains('release')) {
                 def variantProd = variant.productFlavors[0]
-//                def fileName = "${android.defaultConfig.applicationId}"
-//                + "_code${android.defaultConfig.versionCode}"
-//                +"_name${android.defaultConfig.versionName}"
-//                + "_${variantProd.name.replaceAll("_", "")}.apk"
                 def fileName = "${android.defaultConfig.applicationId}" +
                         "_code${android.defaultConfig.versionCode}_name${android.defaultConfig.versionName}" + "_${variantProd.name.replaceAll("_", "")}.apk"
                 outputFileName = fileName
