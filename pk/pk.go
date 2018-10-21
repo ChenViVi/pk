@@ -25,22 +25,20 @@ const downloadURL = "http://adesk.valorachen.top"
 const siteURL = "http://files.valorachen.top/index.php?bucket=adesk&name=%E6%97%A5%E5%B8%B8%E6%9B%B4%E6%96%B0%E5%8C%85"
 
 func main() {
-	var absolutePath string
 	var oldModeEnabled bool
 	var versionUpdateEnabled bool
 	var email string
-	flag.StringVar(&absolutePath, "p", "/", "app module 下的 build.gradle路径，仅用于调试，默认情况下无需添加")
 	flag.BoolVar(&oldModeEnabled, "o", false, "是否使用旧版打包方式，默认为使用新打包方式")
 	flag.BoolVar(&versionUpdateEnabled, "v", false, "是否自增版本号并提交到 Git，默认关闭")
 	flag.StringVar(&email, "e", "", "上传七牛并发邮件时需要的邮件地址，默认关闭此功能")
 	flag.Parse()
-
-	if strings.Compare(absolutePath, "/") == 0 {
-		absolutePath = getCurrentDirectory() + "../app/build.gradle"
-	}
-	fmt.Printf("provided path was %s\n", absolutePath)
-	exists := Exists(absolutePath)
-	if exists {
+	absolutePath, _ := os.Getwd()
+	absolutePath = strings.Replace(absolutePath, "\\", "/", -1)
+	absolutePath = absolutePath + "/app/build.gradle"
+	absolutePath = filepath.FromSlash(absolutePath)
+	fmt.Println(absolutePath)
+	pathExists := Exists(absolutePath)
+	if pathExists {
 		// ext{
 		// 	supportVer = '28.0.0-alpha3'
 		// 	minSdkVersion = 16
@@ -165,7 +163,7 @@ func main() {
 			}
 		}
 	} else {
-		fmt.Println("gradle配置文件不存在")
+		fmt.Println("gradle配置文件不存在，请检查执行目录")
 	}
 }
 
