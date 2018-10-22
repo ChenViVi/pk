@@ -147,9 +147,9 @@ func main() {
 			pkName := pkNameRe.FindString(applicationID)
 			pkName = strings.Replace(pkName, "\"", "", -1)
 			outputName := pkName + "_code" + strconv.Itoa(newVersionCode) + "_name" + newVersionName
-			ExeCommand("7z", "a", "build/"+outputName+".7z", "build/"+outputName+"/*.apk")
 			ExeCommand("qshell", "rput", "adesk", outputName+"_debug.apk", "build/"+outputName+"/"+outputName+"_debug.apk")
 			os.Remove("build/" + outputName + "/" + outputName + "_debug.apk")
+			ExeCommand("7z", "a", "build/"+outputName+".7z", "build/"+outputName+"/*.apk")
 			ExeCommand("qshell", "rput", "adesk", outputName+".7z", "build/"+outputName+".7z")
 			fmt.Println("visit link: " + siteURL)
 			body := "<html><body>" +
