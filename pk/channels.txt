@@ -1,3 +1,4 @@
+debug
 oppo
 vivo
 tencent

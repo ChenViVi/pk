@@ -146,12 +146,15 @@ func main() {
 			pkNameRe, _ := regexp.Compile("\"(.*)\"")
 			pkName := pkNameRe.FindString(applicationID)
 			pkName = strings.Replace(pkName, "\"", "", -1)
-			outputDirName := pkName + "_code" + strconv.Itoa(newVersionCode) + "_name" + newVersionName
-			ExeCommand("7z", "a", "build/"+outputDirName+".7z", "build/"+outputDirName+"/*.apk")
-			ExeCommand("qshell", "rput", "adesk", outputDirName+".7z", "build/"+outputDirName+".7z")
+			outputName := pkName + "_code" + strconv.Itoa(newVersionCode) + "_name" + newVersionName
+			ExeCommand("7z", "a", "build/"+outputName+".7z", "build/"+outputName+"/*.apk")
+			ExeCommand("qshell", "rput", "adesk", outputName+"_debug.apk", "build/"+outputName+"/"+outputName+"_debug.apk")
+			os.Remove("build/" + outputName + "/" + outputName + "_debug.apk")
+			ExeCommand("qshell", "rput", "adesk", outputName+".7z", "build/"+outputName+".7z")
 			fmt.Println("visit link: " + siteURL)
 			body := "<html><body>" +
-				"<h3>下载地址：" + downloadURL + "/" + outputDirName + ".7z" + "</h3>" +
+				"<h3>所有渠道压缩包下载地址：" + downloadURL + "/" + outputName + ".7z" + "</h3>" +
+				"<h3>点击此链接下载安装包进行测试：" + downloadURL + "/" + outputName + "_debug.apk" + "</h3>" +
 				"<h3>更多内容请查看：" + siteURL + "</h3>" +
 				"</body></html>"
 			err := SendMail("acodeplayer@163.com", "playhard7", "smtp.163.com:25", email, pkName+"更新包_v"+newVersionName, body, "html")
