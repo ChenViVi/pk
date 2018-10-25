@@ -3,7 +3,7 @@ apply from: "../pk/base.gradle"
 android {
 
     productFlavors {
-        debug {}
+        dev {}
         oppo {}
         vivo {}
         tencent {}
